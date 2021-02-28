@@ -4,12 +4,19 @@ import AppRouter from "./AppRouter.js";
 import { getAccount, getHomeTransactions } from "./contracts";
 
 import "./App.css";
+import Web3Data from "./components/Web3Data.js";
+import { useWeb3 } from "@openzeppelin/network/react";
+const infuraProjectId = "af5d20278ea542a091bb19688e414e0a";
 
 const App = () => {
+  const web3Context = useWeb3(
+    `wss://mainnet.infura.io/ws/v3/${infuraProjectId}`
+  );
+
   const [state, setState] = useState({
     account: null,
     homeTransactions: null,
-    web3error: null
+    web3error: null,
   });
   useEffect(() => {
     const exec = async () => {
@@ -23,7 +30,9 @@ const App = () => {
 
       try {
         const account = await getAccount();
+        console.log(account, "Account");
         const homeTransactions = await getHomeTransactions();
+        console.log(homeTransactions, "Home stransactions");
         setState({ homeTransactions, account });
       } catch (e) {
         setState({ web3error: e });
@@ -36,11 +45,14 @@ const App = () => {
   const { account, homeTransactions, web3error } = state;
 
   return (
-    <AppRouter
-      account={account}
-      homeTransactions={homeTransactions}
-      web3error={web3error}
-    />
+    <>
+      <Web3Data title="Votre compte" web3Context={web3Context} />
+      <AppRouter
+        account={account}
+        homeTransactions={homeTransactions}
+        web3error={web3error}
+      />
+    </>
   );
 };
 

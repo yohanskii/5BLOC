@@ -12,7 +12,7 @@ const timeline = [
   { text: "Seller sign contract" },
   { text: "Buyer sign and deposit to contract" },
   { text: "Realtor sign contract" },
-  { text: "Buyer finalize transaction" }
+  { text: "Buyer finalize transaction" },
 ];
 
 export default function Contract({ homeTransaction }) {
@@ -21,7 +21,7 @@ export default function Contract({ homeTransaction }) {
   const [contractState, setContractState] = useState(null);
   const [timelineProgress, setTimelineProgress] = useState(1);
 
-  const updateProgress = index => {
+  const updateProgress = (index) => {
     const percent = index / timeline.length;
 
     setProgress(Math.min(percent * 100, 100));
@@ -86,10 +86,11 @@ export default function Contract({ homeTransaction }) {
         <div className="Timeline">
           {timeline.map((point, i) => (
             <div
+              key={i}
               className={cx("Timeline-point", {
                 done: timelineProgress > i,
                 "in-progress": timelineProgress === i,
-                reject: contractState === 5
+                reject: contractState === 5,
               })}
             >
               {i + 1}. {point.text}
@@ -104,7 +105,7 @@ export default function Contract({ homeTransaction }) {
         <div className="ProgressBar-container">
           <div className="ProgressBar-background"></div>
           <div
-            className={cx('ProgressBar-progress', {
+            className={cx("ProgressBar-progress", {
               reject: contractState === 5,
             })}
             style={{ width: `${progress}%` }}

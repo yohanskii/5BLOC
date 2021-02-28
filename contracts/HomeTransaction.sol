@@ -1,4 +1,5 @@
-pragma solidity >=0.4.25 <0.6.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.4.22 <0.9.0;
 
 contract HomeTransaction {
     // Constants
@@ -74,7 +75,7 @@ contract HomeTransaction {
         contractState = ContractState.WaitingRealtorReview;
 
         deposit = msg.value;
-        finalizeDeadline = now + timeBetweenDepositAndFinalization;
+        finalizeDeadline = block.timestamp + timeBetweenDepositAndFinalization;
     }
 
     function realtorReviewedClosingConditions(bool accepted) public {
@@ -107,7 +108,7 @@ contract HomeTransaction {
     }
 
     function anyWithdrawFromTransaction() public {
-        require(buyer == msg.sender || finalizeDeadline <= now, "Only buyer can withdraw before transaction deadline");
+        require(buyer == msg.sender || finalizeDeadline <= block.timestamp, "Only buyer can withdraw before transaction deadline");
 
         require(contractState == ContractState.WaitingFinalization, "Wrong contract state");
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Main.scss";
 import Logo from "../components/Logo";
@@ -7,14 +7,23 @@ import JSONTree from "react-json-tree";
 import Button from "../components/Button";
 
 const HomeTransaction = ({ homeTransaction, index }) => {
+  const [city, setCity] = useState();
+  console.log(homeTransaction, "homeTransaction");
+  useEffect(() => {
+    (async () => {
+      if (homeTransaction) {
+        const city = await homeTransaction.methods.city().call();
+
+        setCity(city);
+      }
+    })();
+  }, [homeTransaction]);
   return (
     <Link to={`/${index}`} key={index}>
       <div className="Contract">
         <div className="Contract-content">
           <div className="Contract-contentTitle">{`Contract #${index}`}</div>
-          <span className="Contract-contentObject">
-            {homeTransaction.options.address}
-          </span>
+          <span className="Contract-contentObject">{city}</span>
         </div>
         <span className="Contract-addr">{homeTransaction.options.address}</span>
       </div>
@@ -27,6 +36,7 @@ const Main = ({ contracts, homeTransactions }) => {
 
   const createContract = async () => {
     const from = await getAccount();
+
     factory.methods
       .create(
         form.address,
@@ -42,51 +52,50 @@ const Main = ({ contracts, homeTransactions }) => {
 
   return (
     <div className="Main">
-      <Logo />
-      <h1 className="Main-title">Contracts</h1>{" "}
+      <h1 className="Main-title">Tous les contrats</h1>{" "}
       <div>
-        <p>Enter the home details for the contract</p>
-        <div class="Contract-form">
+        <p>Entrer les détails du nouvel appartement pour le contrat</p>
+        <div className="Contract-form">
           <input
             className="Contract-formInput"
-            placeholder="Address"
-            onChange={e => setForm({ ...form, address: e.target.value })}
+            placeholder="Adresse"
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
             value={form.address}
           />
           <input
             className="Contract-formInput"
-            placeholder="Zip"
-            onChange={e => setForm({ ...form, zip: e.target.value })}
+            placeholder="Code postal"
+            onChange={(e) => setForm({ ...form, zip: e.target.value })}
             value={form.zip}
           />
           <input
             className="Contract-formInput"
-            placeholder="City"
-            onChange={e => setForm({ ...form, city: e.target.value })}
+            placeholder="Ville"
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
             value={form.city}
           />
           <input
             className="Contract-formInput"
-            placeholder="Realtor fee"
-            onChange={e => setForm({ ...form, realtorFee: e.target.value })}
+            placeholder="Commision lors de la vente"
+            onChange={(e) => setForm({ ...form, realtorFee: e.target.value })}
             value={form.realtorFee}
           />
           <input
             className="Contract-formInput"
-            placeholder="Price"
-            onChange={e => setForm({ ...form, price: e.target.value })}
+            placeholder="Prix de vente"
+            onChange={(e) => setForm({ ...form, price: e.target.value })}
             value={form.price}
           />
           <input
             className="Contract-formInput"
             placeholder="Seller address"
-            onChange={e => setForm({ ...form, seller: e.target.value })}
+            onChange={(e) => setForm({ ...form, seller: e.target.value })}
             value={form.seller}
           />
           <input
             className="Contract-formInput"
             placeholder="Buyer address"
-            onChange={e => setForm({ ...form, buyer: e.target.value })}
+            onChange={(e) => setForm({ ...form, buyer: e.target.value })}
             value={form.buyer}
           />
         </div>
@@ -97,7 +106,11 @@ const Main = ({ contracts, homeTransactions }) => {
       <div className="Contracts">
         {homeTransactions &&
           homeTransactions.map((homeTransaction, index) => (
-            <HomeTransaction homeTransaction={homeTransaction} index={index} />
+            <HomeTransaction
+              key={index}
+              homeTransaction={homeTransaction}
+              index={index}
+            />
           ))}
       </div>
     </div>

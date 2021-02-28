@@ -1,4 +1,17 @@
 const path = require("path");
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+
+const mnemonicPhrase =
+  "assist dial clay celery wild bag credit bike mountain tide error pretty"; // 12 word mnemonic
+
+// let provider = new HDWalletProvider({
+//   mnemonic: {
+//     phrase: mnemonicPhrase,
+//   },
+//   providerOrUrl:
+//     "https://rinkeby.infura.io/v3/af5d20278ea542a091bb19688e414e0a",
+// });
+
 /**
  * Use this file to configure your truffle project. It's seeded with some
  * common settings for different networks and features like migrations,
@@ -37,17 +50,26 @@ module.exports = {
    */
 
   networks: {
+    rinkeby: {
+      provider: function () {
+        return new HDWalletProvider(
+          mnemonicPhrase,
+          "https://rinkeby.infura.io/v3/8091cfdc25da4a8f87cc98c3416fdab2"
+        );
+      },
+      network_id: 4,
+    },
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    //development: {
-    //  host: "127.0.0.1", // Localhost (default: none)
-    //  port: 9545, // Standard Ethereum port (default: none)
-    //  network_id: "*" // Any network (default: none)
-    // }
+    // development: {
+    //   host: "127.0.0.1", // Localhost (default: none)
+    //   port: 9545, // Standard Ethereum port (default: none)
+    //   network_id: "*", // Any network (default: none)
+    // },
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port
@@ -83,7 +105,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      // version: "0.5.11" // Fetch exact version from solc-bin (default: truffle's version)
+      // version: "0.5.1",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
@@ -92,7 +114,7 @@ module.exports = {
       //  },
       //  evmVersion: "byzantium"
       // }
-    }
+    },
   },
-  contracts_build_directory: path.join(__dirname, "client/src/contracts")
+  contracts_build_directory: path.join(__dirname, "client/src/contracts"),
 };

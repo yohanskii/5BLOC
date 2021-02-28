@@ -1,4 +1,5 @@
-pragma solidity >=0.4.25 <0.6.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.4.22 <0.9.0;
 
 import "./HomeTransaction.sol";
 
@@ -13,6 +14,7 @@ contract Factory {
         uint _price,
         address payable _seller,
         address payable _buyer) public returns(HomeTransaction homeTransaction)  {
+          
     homeTransaction = new HomeTransaction(
       _address,
       _zip,
