@@ -8,13 +8,25 @@ import Button from "../components/Button";
 
 const HomeTransaction = ({ homeTransaction, index }) => {
   const [city, setCity] = useState();
+  const [picture, setPicture] = useState();
+  const [stateSelling, setStateSelling] = useState();
+  const [seller, setSeller] = useState();
+  const [price, setPrice] = useState();
   console.log(homeTransaction, "homeTransaction");
+
   useEffect(() => {
     (async () => {
       if (homeTransaction) {
         const city = await homeTransaction.methods.city().call();
-
+        const picture = await homeTransaction.methods.picture().call();
+        const stateSell = await homeTransaction.methods.contractState().call();
+        const seller = await homeTransaction.methods.seller().call();
+        const price = await homeTransaction.methods.price().call();
         setCity(city);
+        setPicture(picture);
+        setStateSelling(stateSell);
+        setSeller(seller);
+        setPrice(price);
       }
     })();
   }, [homeTransaction]);
@@ -23,9 +35,18 @@ const HomeTransaction = ({ homeTransaction, index }) => {
       <div className="Contract">
         <div className="Contract-content">
           <div className="Contract-contentTitle">{`Contract #${index}`}</div>
-          <span className="Contract-contentObject">{city}</span>
+          <span className="Contract-contentObject">
+            {city}- {price}Ether
+          </span>
+          {stateSelling == 1 ? (
+            <p style={{ color: "red" }}>Pas à vendre</p>
+          ) : (
+            <p style={{ color: "green" }}>à vendre</p>
+          )}
         </div>
-        <span className="Contract-addr">{homeTransaction.options.address}</span>
+        <img src={picture} style={{ width: "100%", height: "90px" }} />
+        <p>Propriétaire :</p>
+        <span className="Contract-addr">{seller}</span>
       </div>
     </Link>
   );
@@ -40,12 +61,10 @@ const Main = ({ contracts, homeTransactions }) => {
     factory.methods
       .create(
         form.address,
-        form.zip,
+        form.picture,
         form.city,
         form.realtorFee,
-        form.price,
-        form.seller,
-        form.buyer
+        form.price
       )
       .send({ from });
   };
@@ -60,43 +79,31 @@ const Main = ({ contracts, homeTransactions }) => {
             className="Contract-formInput"
             placeholder="Adresse"
             onChange={(e) => setForm({ ...form, address: e.target.value })}
-            value={form.address}
+            value={form.address || ""}
           />
           <input
             className="Contract-formInput"
-            placeholder="Code postal"
-            onChange={(e) => setForm({ ...form, zip: e.target.value })}
-            value={form.zip}
+            placeholder="Photo"
+            onChange={(e) => setForm({ ...form, picture: e.target.value })}
+            value={form.picture || ""}
           />
           <input
             className="Contract-formInput"
             placeholder="Ville"
             onChange={(e) => setForm({ ...form, city: e.target.value })}
-            value={form.city}
+            value={form.city || ""}
           />
           <input
             className="Contract-formInput"
             placeholder="Commision lors de la vente"
             onChange={(e) => setForm({ ...form, realtorFee: e.target.value })}
-            value={form.realtorFee}
+            value={form.realtorFee || ""}
           />
           <input
             className="Contract-formInput"
             placeholder="Prix de vente"
             onChange={(e) => setForm({ ...form, price: e.target.value })}
-            value={form.price}
-          />
-          <input
-            className="Contract-formInput"
-            placeholder="Seller address"
-            onChange={(e) => setForm({ ...form, seller: e.target.value })}
-            value={form.seller}
-          />
-          <input
-            className="Contract-formInput"
-            placeholder="Buyer address"
-            onChange={(e) => setForm({ ...form, buyer: e.target.value })}
-            value={form.buyer}
+            value={form.price || ""}
           />
         </div>
         <Button className="Contract-createBtn" onClick={() => createContract()}>

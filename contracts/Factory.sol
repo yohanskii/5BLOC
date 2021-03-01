@@ -4,26 +4,31 @@ pragma solidity >=0.4.22 <0.9.0;
 import "./HomeTransaction.sol";
 
 contract Factory {
+  address payable owner;
   HomeTransaction[] contracts;
 
+  constructor() public {
+        //le mec qui deploie est proprietaire du smart contract
+        owner = msg.sender;
+  }
+  
   function create(
         string memory _address,
-        string memory _zip,
+        string memory _picture,
         string memory _city,
         uint _realtorFee,
-        uint _price,
-        address payable _seller,
-        address payable _buyer) public returns(HomeTransaction homeTransaction)  {
+        uint _price
+        ) public returns(HomeTransaction homeTransaction)  {
           
     homeTransaction = new HomeTransaction(
       _address,
-      _zip,
+      _picture,
       _city,
       _realtorFee,
       _price,
       msg.sender,
-      _seller,
-      _buyer);
+      owner
+      );
     contracts.push(homeTransaction);
   }
 
@@ -39,5 +44,11 @@ contract Factory {
 
   function getInstanceCount() public view returns (uint count) {
     count = contracts.length;
+  }
+
+
+  function kill() public {
+    require(msg.sender == owner);
+    selfdestruct(owner);
   }
 }

@@ -3,19 +3,27 @@ import "./Seller.scss";
 import { getAccount } from "../contracts";
 
 export default function Seller({ contractState, instance }) {
-  const sellerSignContract = async () => {
+  console.log(contractState, "contractState");
+
+  const sellerToSell = async () => {
     const account = await getAccount();
-    instance.methods.sellerSignContract().send({ from: account });
+    instance.methods.sellerToSell().send({ from: account });
   };
 
+  const sellerNotToSell = async () => {
+    const account = await getAccount();
+    instance.methods.sellerNotToSell().send({ from: account });
+  };
   return (
     <div className="Seller">
-      {contractState === 0 ? (
+      {contractState == 1 ? (
         <>
-          <button onClick={() => sellerSignContract()}>Sign contract</button>
+          <button onClick={() => sellerToSell()}>Mettre en vente</button>
         </>
       ) : (
-        <span>Signed, nothing else to do. ✨</span>
+        <>
+          <button onClick={() => sellerNotToSell()}>Annuler la vente</button>
+        </>
       )}
     </div>
   );

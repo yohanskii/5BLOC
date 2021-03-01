@@ -17,45 +17,52 @@ const timeline = [
 
 export default function Contract({ homeTransaction }) {
   const { index } = useParams();
-  const [progress, setProgress] = useState(10);
-  const [contractState, setContractState] = useState(null);
-  const [timelineProgress, setTimelineProgress] = useState(1);
 
-  const updateProgress = (index) => {
-    const percent = index / timeline.length;
-
-    setProgress(Math.min(percent * 100, 100));
-    setTimelineProgress(index);
-  };
+  const [city, setCity] = useState();
+  const [picture, setPicture] = useState();
+  const [stateSelling, setStateSelling] = useState();
+  const [seller, setSeller] = useState();
+  const [price, setPrice] = useState();
 
   useEffect(() => {
     (async () => {
       if (homeTransaction) {
-        const res = await homeTransaction.methods.contractState().call();
-        setContractState(parseInt(res, 10));
+        const city = await homeTransaction.methods.city().call();
+        const picture = await homeTransaction.methods.picture().call();
+        const stateSell = await homeTransaction.methods.contractState().call();
+        const seller = await homeTransaction.methods.seller().call();
+        const price = await homeTransaction.methods.price().call();
+
+        setCity(city);
+        setPicture(picture);
+        setStateSelling(stateSell);
+        setSeller(seller);
+        setPrice(price);
       }
     })();
   }, [homeTransaction]);
 
-  useEffect(() => {
-    updateProgress(parseInt(contractState, 10) + 1);
-  }, [contractState]);
-
+  console.log(homeTransaction.options);
   return (
     <div className="ContractPage">
       <div className="ContractPage-body">
         <h1>Contract</h1>
-        <span className="ContractPage-addr">
-          {homeTransaction && homeTransaction.options.address}
+        <span className="Contract-contentObject">
+          {city}- {price}Ether
         </span>
+        {stateSelling == 1 ? (
+          <p style={{ color: "red" }}>Pas à vendre</p>
+        ) : (
+          <p style={{ color: "green" }}>à vendre</p>
+        )}
+        <img src={picture} style={{ width: "100%", height: "90px" }} />
         <Route
           exact
           path="/:addr"
           render={() => (
             <div className="Contract-tabs">
-              <Link to={`/${index}/buyer`}>Buyer</Link>
-              <Link to={`/${index}/seller`}>Seller</Link>
-              <Link to={`/${index}/coop`}>Co-op</Link>
+              <Link to={`/${index}/buyer`}>Acheteur</Link>
+              <Link to={`/${index}/seller`}>Vendeur</Link>
             </div>
           )}
         />
@@ -63,54 +70,19 @@ export default function Contract({ homeTransaction }) {
           path="/:addr/buyer"
           render={() => (
             <Buyer
-              homeTransaction={homeTransaction}
-              contractState={contractState}
+              instance={homeTransaction}
+              contractState={stateSelling}
+              price={price}
             />
           )}
         />
         <Route
           path="/:addr/seller"
           render={() => (
-            <Seller contractState={contractState} instance={homeTransaction} />
+            <Seller contractState={stateSelling} instance={homeTransaction} />
           )}
         />
-        <Route
-          path="/:addr/coop"
-          render={() => (
-            <Coop
-              contractState={contractState}
-              homeTransaction={homeTransaction}
-            />
-          )}
-        />
-        <div className="Timeline">
-          {timeline.map((point, i) => (
-            <div
-              key={i}
-              className={cx("Timeline-point", {
-                done: timelineProgress > i,
-                "in-progress": timelineProgress === i,
-                reject: contractState === 5,
-              })}
-            >
-              {i + 1}. {point.text}
-            </div>
-          ))}
-          {contractState === 5 && (
-            <div className={cx("Timeline-point failed")}>
-              Contract rejected.
-            </div>
-          )}
-        </div>
-        <div className="ProgressBar-container">
-          <div className="ProgressBar-background"></div>
-          <div
-            className={cx("ProgressBar-progress", {
-              reject: contractState === 5,
-            })}
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
+        <div className="Timeline"></div>
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ module.exports = {
    *
    * $ truffle test --network <network-name>
    */
-
+  /*5BLOCBLOC rinkeby */
   networks: {
     rinkeby: {
       provider: function () {
