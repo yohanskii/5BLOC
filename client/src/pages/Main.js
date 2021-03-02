@@ -12,6 +12,7 @@ const HomeTransaction = ({ homeTransaction, index }) => {
   const [stateSelling, setStateSelling] = useState();
   const [seller, setSeller] = useState();
   const [price, setPrice] = useState();
+  const [tokenId, setTokenId] = useState();
   console.log(homeTransaction, "homeTransaction");
 
   useEffect(() => {
@@ -22,6 +23,8 @@ const HomeTransaction = ({ homeTransaction, index }) => {
         const stateSell = await homeTransaction.methods.contractState().call();
         const seller = await homeTransaction.methods.seller().call();
         const price = await homeTransaction.methods.price().call();
+        const tokenId = await homeTransaction.methods.tokenId().call();
+        setTokenId(tokenId);
         setCity(city);
         setPicture(picture);
         setStateSelling(stateSell);
@@ -38,6 +41,8 @@ const HomeTransaction = ({ homeTransaction, index }) => {
           <span className="Contract-contentObject">
             {city}- {price}Ether
           </span>
+          <p>TOKEN ID : {tokenId}</p>
+
           {stateSelling == 1 ? (
             <p style={{ color: "red" }}>Pas à vendre</p>
           ) : (

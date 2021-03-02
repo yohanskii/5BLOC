@@ -27,7 +27,8 @@ contract Factory {
       _realtorFee,
       _price,
       msg.sender,
-      owner
+      owner,
+      contracts.length+1
       );
     contracts.push(homeTransaction);
   }

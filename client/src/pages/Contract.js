@@ -32,6 +32,11 @@ export default function Contract({ homeTransaction }) {
         const stateSell = await homeTransaction.methods.contractState().call();
         const seller = await homeTransaction.methods.seller().call();
         const price = await homeTransaction.methods.price().call();
+        const nbTransaction = await homeTransaction.methods
+          .nbTransaction()
+          .call();
+
+        console.log(nbTransaction, "nbTransaction");
 
         setCity(city);
         setPicture(picture);
